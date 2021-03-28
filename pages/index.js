@@ -1,65 +1,32 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import Layout from '../components/layout'
+import useSWR from 'swr'
 
 export default function Home() {
+  const { data } = useSWR('https://dn0fypjodt4sv.cloudfront.net/v1/scan-questions')
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+    <div>
+      <Layout header="問題集" title="ITパスポート試験　令和3年春">
+      <div className="alert alert-primary text-center">
+        <h5 className="mb-4">
+          {data != undefined ? data.message : 'error...' }
+        </h5>
+        <table className="table table-dark">
+          <tbody>
+            {data != undefined ? data.Items.map((value, key)=> (
+              <tr key={key}>
+                <th>問題 {value.no}</th>
+                <td>
+                  {value.question.map((value, key)=> (
+                    <p>{value.text}</p>))}
+                </td>
+                <td>{value.answer}</td>
+              </tr>
+            )) : <tr><th></th><td>no data.</td><td></td></tr>}
+          </tbody>
+        </table>
+      </div>
+      </Layout>
     </div>
   )
 }
